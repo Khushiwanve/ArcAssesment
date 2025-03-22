@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+  </head>
+  <body class="bg-blue-200 flex flex-col items-center justify-center min-h-screen">
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState } = React;
+
+      function PasswordManager() {
+        const [website, setWebsite] = useState('');
+        const [username, setUsername] = useState('');
+        const [password, setPassword] = useState('');
+        const [passwords, setPasswords] = useState([]);
+        const [showPasswords, setShowPasswords] = useState(false);
+        const [search, setSearch] = useState('');
+
+        const handleAddPassword = (e) => {
+          e.preventDefault();
+          if (website && username && password) {
+            setPasswords([
+              ...passwords,
+              { website, username, password },
+            ]);
+            setWebsite('');
+            setUsername('');
+            setPassword('');
+          }
+        };
+
+        const filteredPasswords = passwords.filter((p) =>
+          p.website.toLowerCase().includes(search.toLowerCase())
+        );
+
+        return (
+          <div className="w-full max-w-4xl">
+            {/* Header */}
+            <div className="flex items-center justify-center py-6">
+            
+              <h1 className="text-2xl font-bold text-gray-950">
+                PASSWORD MANAGER
+              </h1>
+            </div>
+            {/* Add New Password Section */}
+            <div className="bg-blue-900 rounded-lg p-6 flex justify-between items-center mb-6">
+              <div className="w-1/2">
+                <h2 className="text-white text-xl mb-4">Add New Password</h2>
+                <form className="space-y-4" onSubmit={handleAddPassword}>
+                  <div className="flex items-center bg-white rounded-lg p-2">
+                    <i className="fas fa-globe text-gray-500 mr-2"></i>
+                    <input
+                      type="text"
+                      placeholder="Enter Website"
+                      className="w-full outline-none"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-center bg-white rounded-lg p-2">
+                    <i className="fas fa-user text-gray-500 mr-2"></i>
+                    <input
+                      type="text"
+                      placeholder="Enter Username"
+                      className="w-full outline-none"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex items-center bg-white rounded-lg p-2">
+                    <i className="fas fa-lock text-gray-500 mr-2"></i>
+                    <input
+                      type={showPasswords ? 'text' : 'password'}
+                      placeholder="Enter Password"
+                      className="w-full outline-none"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+                  >
+                    Add
+                  </button>
+                </form>
+              </div>
+              
+            </div>
+            {/* Your Passwords Section */}
+            <div className="bg-blue-800 rounded-lg p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-white mr-1 text-xl">Your Password</h2>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="bg-white rounded-lg p-2 outline-none mr-2"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <i className="fas fa-search text-white"></i>
+                </div>
+              </div>
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-white">{filteredPasswords.length}</div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="show-passwords"
+                    className="mr-2"
+                    checked={showPasswords}
+                    onChange={() => setShowPasswords(!showPasswords)}
+                  />
+                  <label className="text-white" htmlFor="show-passwords">
+                    Show Passwords
+                  </label>
+                </div>
+              </div>
+              {filteredPasswords.length === 0 ? (
+                <div className="flex flex-col items-center">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlKeRmBPTnl2IoB5pl8v6e1bGZ-xwwmPHXrw&s"
+                    alt="Illustration of a person standing next to a locked laptop"
+                    className="mb-4"
+                  />
+                  <p className="text-white">No Passwords</p>
+                </div>
+              ) : (
+                <ul className="text-white">
+                  {filteredPasswords.map((p, index) => (
+                    <li key={index} className="mb-2">
+                      <strong>Website:</strong> {p.website} <br />
+                      <strong>Username:</strong> {p.username} <br />
+                      <strong>Password:</strong>{' '}
+                      {showPasswords ? p.password : '••••••••'}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        );
+      }
+      ReactDOM.render(<PasswordManager />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
